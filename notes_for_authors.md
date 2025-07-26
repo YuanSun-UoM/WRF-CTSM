@@ -19,10 +19,12 @@ sphinx-quickstart
 
 sphinx-build -b html ${DOCS_DIR}source ${DOCS_DIR}
 open ${DOCS_DIR}/index.html
+
+touch docs/.nojekyll
 ```
 
 - change docs style in `conf.py`
-
 - For GitHub, enable **Discussions** and add **issue templates** in **Settings**.
-
 - For GitHub Page, set the source as `Deploy from a branch`, set the Branch as `main/docs/`
+  - the html files should be directly in the `docs` rather than inner folder
+  - `touch docs/.nojekyll` because GitHub Pages uses Jekyll by default, which **ignores _static/** folders unless you disable it.

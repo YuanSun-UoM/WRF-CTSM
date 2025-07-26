@@ -115,7 +115,7 @@ git checkout release-v4.7.0
 
   - From:
 
-    ```
+    ```fortran
        Q2(I)=QSFCMR(I)+(QV1D(I)-QSFCMR(I))*PSIQ2/PSIQ
        Q2(I)= MAX(Q2(I), MIN(QSFCMR(I), QV1D(I)))
        Q2(I)= MIN(Q2(I), 1.05*QV1D(I))
@@ -172,50 +172,24 @@ git checkout ctsm5.3.024
 
 ### Modify CTSM code
 
--  According to [CTSM-Norway tutorial](https://metos-uio.github.io/CTSM-Norway-Documentation/wrf-ctsm/), modify `${WRF_ROOT}/${WRFNAME}/${CTSMNAME}/src/cpl/utils/lnd_import_export_utils.F90`, around Line 131,
+- Modify `${WRF_ROOT}/${WRFNAME}/${CTSMNAME}/src/cpl/lilac/lnd_comp_esmf.F90`, around Line 38,
 
   - From:
 
     ```fortran
-           end if
-           if ( wateratm2lndbulk_inst%forc_q_not_downscaled_grc(g) < 0.0_r8 )then
-              call shr_sys_abort( subname//&
-                   ' ERROR: Bottom layer specific humidty sent from the atmosphere model is less than zero' )
-           end if     
-        end do
+       use clm_varctl        , only : nsrStartup, nsrContinue
     ```
 
   - To:
 
     ```fortran
-           end if
-    !YS       
-           !if ( wateratm2lndbulk_inst%forc_q_not_downscaled_grc(g) < 0.0_r8 )then
-           !   call shr_sys_abort( subname//&
-           !        ' ERROR: Bottom layer specific humidty sent from the atmosphere model is less than zero' )
-           !end if
-    !YS  
-        end do
+       !YS
+       !use clm_varctl        , only : nsrStartup, nsrContinue
+       use clm_varctl        , only : nsrStartup, nsrContinue, nsrBranch
+       !YS
     ```
 
--  Modify `${WRF_ROOT}/${WRFNAME}/${CTSMNAME}/src/cpl/lilac/lnd_comp_esmf.F90`, around Line 38,
-
-  - From:
-
-    ```fortran
-    use clm_varctl        , only : nsrStartup, nsrContinue
-    ```
-
-  - To:
-
-    ```fortran
-    !YS
-    !use clm_varctl        , only : nsrStartup, nsrContinue
-    use clm_varctl        , only : nsrStartup, nsrContinue, nsrBranch
-    !YS
-    ```
-
--  According to [WRF-CTSM restart issue](https://bb.cgd.ucar.edu/cesm/threads/ctsm-restart-using-lilac-coupler.11510/), modify `${WRF_ROOT}/${WRFNAME}/${CTSMNAME}/src/cpl/lilac/lnd_comp_esmf.F90`, around Line 293,
+- According to [WRF-CTSM restart issue](https://bb.cgd.ucar.edu/cesm/threads/ctsm-restart-using-lilac-coupler.11510/), modify `${WRF_ROOT}/${WRFNAME}/${CTSMNAME}/src/cpl/lilac/lnd_comp_esmf.F90`, around Line 293,
 
   - From:
 
@@ -237,7 +211,28 @@ git checkout ctsm5.3.024
            nsrest = nsrBranch
     !YS       
     ```
+  
+- According to [CTSM-Norway tutorial](https://metos-uio.github.io/CTSM-Norway-Documentation/wrf-ctsm/), modify `${WRF_ROOT}/${WRFNAME}/${CTSMNAME}/src/cpl/utils/lnd_import_export_utils.F90`, around Line 131,
 
+  - From:
+    ```fortran
+         if ( wateratm2lndbulk_inst%forc_q_not_downscaled_grc(g) < 0.0_r8 )then
+              call shr_sys_abort( subname//&
+              '         ERROR: Bottom layer specific humidty sent from the atmosphere model is less than zero' )
+         end if 
+    ```
+
+  - To:
+
+    ```fortran
+         !YS       
+         !if ( wateratm2lndbulk_inst%forc_q_not_downscaled_grc(g) < 0.0_r8 )then
+             !call shr_sys_abort( subname//&
+             !        ' ERROR: Bottom layer specific humidty sent from the atmosphere model is less than zero' )
+         !end if
+         !YS 
+    ```
+  
 - According to [using the CTSM lake model](https://github.com/ESCOMP/CTSM/discussions/1832), modify ``${WRF_ROOT}/${WRFNAME}/${CTSMNAME}/tools/create_scrip_file.ncl` by adding:
 
   ```
