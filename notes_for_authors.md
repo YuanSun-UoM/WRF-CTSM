@@ -17,10 +17,12 @@ sphinx-quickstart
 > Author name(s): Yuan Sun
 > Project release []:
 
-sphinx-build -b html ${DOCS_DIR}source ${DOCS_DIR}_build
-open ${DOCS_DIR}_build/index.html
+sphinx-build -b html ${DOCS_DIR}source ${DOCS_DIR}
+open ${DOCS_DIR}/index.html
 ```
 
 - change docs style in `conf.py`
 
 - For GitHub, enable **Discussions** and add **issue templates** in **Settings**.
+
+- For GitHub Page, set the source as `Deploy from a branch`, set the Branch as `main/docs/`
